@@ -1,0 +1,6 @@
+{
+  "task_text": "Complex task in a large map start(2,2) goal(58,40) with disturb and dense obstacles.",
+  "robot_type": "helical_microrobot",
+  "drive_mode": "electromagnetic"
+}
+

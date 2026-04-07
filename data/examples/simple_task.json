@@ -1,0 +1,6 @@
+{
+  "task_text": "Simple task: navigate in a medium grid start(1,1) goal(35,25) with low disturbance.",
+  "robot_type": "microrobot",
+  "drive_mode": "magnetic"
+}
+
