@@ -22,6 +22,7 @@ def inject_base_style() -> None:
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
         .brand-wrap {
             display: flex;
@@ -59,7 +60,9 @@ def inject_base_style() -> None:
             background: #ffffff;
         }
         .overview {
-            background: #fcfcff;
+            background: radial-gradient(circle at 8% 15%, #eef2ff 0 18%, transparent 18%),
+                        radial-gradient(circle at 90% 22%, #ecfeff 0 14%, transparent 14%),
+                        #fcfcff;
             border: 1px solid #dbeafe;
             border-radius: 14px;
             padding: 14px;
@@ -84,6 +87,13 @@ def inject_base_style() -> None:
             border: 1px solid #e5e7eb;
             border-radius: 10px;
             padding: 10px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .agent-icon {
+            display: inline-block;
+            width: 22px;
+            text-align: center;
+            margin-right: 4px;
         }
         .agent-card b {
             color: #111827;
@@ -119,6 +129,7 @@ def inject_base_style() -> None:
             border-radius: 14px;
             padding: 14px;
             margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
         }
         .panel h4 {
             margin: 0 0 6px 0;
@@ -141,6 +152,41 @@ def inject_base_style() -> None:
             padding: 10px 12px;
             color: #1e3a8a;
             font-size: 0.9rem;
+        }
+        .decor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 8px;
+            margin: 8px 0 12px 0;
+        }
+        .decor-item {
+            background: #ffffff;
+            border: 1px dashed #d1d5db;
+            border-radius: 10px;
+            padding: 8px 10px;
+            color: #4b5563;
+            font-size: 0.82rem;
+        }
+        .status-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .status-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+        .status-item b {
+            display: block;
+            color: #111827;
+            font-size: 0.92rem;
+        }
+        .status-item span {
+            color: #6b7280;
+            font-size: 0.8rem;
         }
         </style>
         """,
@@ -179,10 +225,10 @@ def render_app_shell(active_tab: str) -> None:
             <h3>System Overview</h3>
             <p>Automated pipeline from requirement input to strategy generation, simulation execution, and feedback optimization.</p>
             <div class="agent-grid">
-                <div class="agent-card"><b>RK Agent</b><br><span>Requirement Parsing</span></div>
-                <div class="agent-card"><b>CS Agent</b><br><span>Strategy Generation</span></div>
-                <div class="agent-card"><b>SD Agent</b><br><span>Simulation Design</span></div>
-                <div class="agent-card"><b>FO Agent</b><br><span>Execution Feedback</span></div>
+                <div class="agent-card"><b><span class="agent-icon">⚡</span>RK Agent</b><br><span>Requirement Parsing</span></div>
+                <div class="agent-card"><b><span class="agent-icon">🧠</span>CS Agent</b><br><span>Strategy Generation</span></div>
+                <div class="agent-card"><b><span class="agent-icon">🧭</span>SD Agent</b><br><span>Simulation Design</span></div>
+                <div class="agent-card"><b><span class="agent-icon">📈</span>FO Agent</b><br><span>Execution Feedback</span></div>
             </div>
         </div>
 
@@ -192,4 +238,14 @@ def render_app_shell(active_tab: str) -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+def render_stage_progress(active_tab: str) -> None:
+    progress_map = {
+        "requirement": 0.25,
+        "parameter": 0.5,
+        "simulation": 0.75,
+        "report": 1.0,
+    }
+    st.progress(progress_map.get(active_tab, 0.25))
 

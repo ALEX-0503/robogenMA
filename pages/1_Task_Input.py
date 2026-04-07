@@ -4,11 +4,13 @@ from pathlib import Path
 
 import streamlit as st
 
+from robogenma.utils.external_context import fetch_external_context
 from robogenma.utils.io import load_json
-from robogenma.utils.ui import inject_base_style, render_app_shell
+from robogenma.utils.ui import inject_base_style, render_app_shell, render_stage_progress
 
 inject_base_style()
 render_app_shell("requirement")
+render_stage_progress("requirement")
 st.markdown(
     """
     <div class="panel">
@@ -50,9 +52,38 @@ with right:
         unsafe_allow_html=True,
     )
 
-if st.button("Parse Requirement", type="primary", use_container_width=True):
+with st.expander("External Link Boost (Optional Bonus)", expanded=False):
+    st.caption(
+        "Use 1 public URL to enrich requirement context. Keep this optional for classroom stability."
+    )
+    ext_url = st.text_input("Reference URL", placeholder="https://example.com/article")
+    if st.button("Fetch External Context", use_container_width=True):
+        result = fetch_external_context(ext_url)
+        if result.ok:
+            enriched = (
+                f"{task_text}\n\nExternal context from {result.url}:\n"
+                f"{result.text}"
+            )
+            st.session_state["task_text"] = enriched
+            st.success("External context appended to task requirement.")
+            st.text_area("Context Preview", value=result.text, height=130)
+        else:
+            st.warning(f"Fetch failed: {result.message}")
+
+col_parse, col_next = st.columns([2, 1])
+with col_parse:
+    parse_clicked = st.button("Parse Requirement", type="primary", use_container_width=True)
+with col_next:
+    simulate_direct = st.button("Skip to Simulation", use_container_width=True)
+
+if parse_clicked:
     st.session_state["task_text"] = task_text
     st.session_state["robot_type"] = robot_type
     st.session_state["drive_mode"] = drive_mode
-    st.success("Requirement saved. Next step: open Parameter Display page.")
+    st.switch_page("pages/2_Parameter_Table.py")
+elif simulate_direct:
+    st.session_state["task_text"] = task_text
+    st.session_state["robot_type"] = robot_type
+    st.session_state["drive_mode"] = drive_mode
+    st.switch_page("pages/3_Simulation.py")
 

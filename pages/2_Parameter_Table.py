@@ -5,10 +5,11 @@ import json
 import streamlit as st
 
 from robogenma.agents.rk_agent import RKAgent
-from robogenma.utils.ui import inject_base_style, render_app_shell
+from robogenma.utils.ui import inject_base_style, render_app_shell, render_stage_progress
 
 inject_base_style()
 render_app_shell("parameter")
+render_stage_progress("parameter")
 st.markdown(
     """
     <div class="panel">
@@ -51,4 +52,26 @@ with st.expander("Full Structured JSON", expanded=True):
 st.session_state["rk_task"] = task
 st.session_state["rk_env"] = env
 st.session_state["rk_constraints"] = constraints
+
+st.markdown(
+    """
+    <div class="panel">
+      <h4>Domain Knowledge Constraints</h4>
+      <p class="panel-sub">
+      - Typical channel scale: 10-100 micrometers<br>
+      - Keep final tracking error below 1 micrometer when possible<br>
+      - Increase obstacle-avoid weight in dense scenarios
+      </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+col_prev, col_next = st.columns(2)
+with col_prev:
+    if st.button("Back to Requirement Input", use_container_width=True):
+        st.switch_page("pages/1_Task_Input.py")
+with col_next:
+    if st.button("Continue to Strategy & Simulation", type="primary", use_container_width=True):
+        st.switch_page("pages/3_Simulation.py")
 

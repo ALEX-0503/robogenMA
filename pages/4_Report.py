@@ -3,11 +3,12 @@ from __future__ import annotations
 import streamlit as st
 
 from robogenma.utils.report import to_markdown_report
-from robogenma.utils.ui import inject_base_style, render_app_shell
+from robogenma.utils.ui import inject_base_style, render_app_shell, render_stage_progress
 from robogenma.utils.visualization import metrics_dataframe
 
 inject_base_style()
 render_app_shell("report")
+render_stage_progress("report")
 st.markdown(
     """
     <div class="panel">
@@ -24,6 +25,17 @@ if not decision:
     st.stop()
 
 metrics = decision.result.metrics
+st.markdown(
+    """
+    <div class="status-strip">
+      <div class="status-item"><b>Pipeline Status</b><span>Completed</span></div>
+      <div class="status-item"><b>Seed Mode</b><span>Deterministic</span></div>
+      <div class="status-item"><b>Report Type</b><span>Simulation + Feedback</span></div>
+      <div class="status-item"><b>Export</b><span>Markdown</span></div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 c1, c2, c3 = st.columns(3)
 c1.metric("Completion Rate", f"{metrics.completion_rate:.2f}")
 c2.metric("Localization Error", f"{metrics.localization_error:.2f}")

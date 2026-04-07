@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import time
+
 import streamlit as st
 
 from robogenma.agents.main_agent import MainAgent
 from robogenma.utils.seed import set_global_seed
-from robogenma.utils.ui import inject_base_style, render_app_shell
+from robogenma.utils.ui import inject_base_style, render_app_shell, render_stage_progress
 from robogenma.utils.visualization import make_trajectory_figure
 
 inject_base_style()
 render_app_shell("simulation")
+render_stage_progress("simulation")
 st.markdown(
     """
     <div class="panel">
@@ -31,6 +34,13 @@ with action_col:
     seed = st.number_input("Random Seed", min_value=0, max_value=10_000, value=42, step=1)
 
 if st.button("Start Simulation", type="primary", use_container_width=True):
+    progress = st.progress(0)
+    status = st.empty()
+    status.info("Initializing simulation kernel...")
+    time.sleep(0.25)
+    progress.progress(30)
+    status.info("Running RK/CS pipeline...")
+
     set_global_seed(seed)
     main_agent = MainAgent()
     decision = main_agent.run(
@@ -38,9 +48,15 @@ if st.button("Start Simulation", type="primary", use_container_width=True):
         robot_type=st.session_state.get("robot_type", "microrobot"),
         drive_mode=st.session_state.get("drive_mode", "magnetic"),
     )
+    progress.progress(80)
+    status.info("Applying FO feedback and preparing report...")
+    time.sleep(0.25)
     decision.request.environment.seed = int(seed)
     st.session_state["decision"] = decision
-    st.success("Simulation completed. Trajectory and feedback are ready.")
+    progress.progress(100)
+    status.success("Simulation complete. Redirecting to Result Report...")
+    time.sleep(0.35)
+    st.switch_page("pages/4_Report.py")
 
 decision = st.session_state.get("decision")
 if decision:
